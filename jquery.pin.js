@@ -6,12 +6,12 @@
         options = options || {};
 
         var recalculateLimits = function () {
-            for (var i=0, len=elements.length; i<len; i++) {
+            for (var i = 0, len = elements.length; i < len; i++) {
                 var $this = elements[i];
 
                 if (options.minWidth && $window.width() <= options.minWidth) {
                     if ($this.parent().is(".pin-wrapper")) { $this.unwrap(); }
-                    $this.css({width: "", left: "", top: "", position: ""});
+                    $this.css({ width: "", left: "", top: "", position: "" });
                     if (options.activeClass) { $this.removeClass(options.activeClass); }
                     disabled = true;
                     continue;
@@ -29,8 +29,8 @@
                 }
 
                 var pad = $.extend({
-                  top: 0,
-                  bottom: 0
+                    top: 0,
+                    bottom: 0
                 }, options.padding || {});
 
                 $this.data("pin", {
@@ -41,7 +41,12 @@
                     parentTop: parentOffset.top
                 });
 
-                $this.css({width: $this.outerWidth()});
+                // If element was invisible, its outerWidth is 0, then it never get its width back; set width=auto first for that reason 
+                if (u.outerWidth() == 0) {
+                    u.css({ width: "auto" });
+                }
+
+                $this.css({ width: $this.outerWidth() });
                 $this.parent().css("height", $this.outerHeight());
             }
         };
@@ -52,24 +57,24 @@
             scrollY = $window.scrollTop();
 
             var elmts = [];
-            for (var i=0, len=elements.length; i<len; i++) {          
+            for (var i = 0, len = elements.length; i < len; i++) {
                 var $this = $(elements[i]),
-                    data  = $this.data("pin");
+                    data = $this.data("pin");
 
                 if (!data) { // Removed element
-                  continue;
+                    continue;
                 }
 
-                elmts.push($this); 
-                  
+                elmts.push($this);
+
                 var from = data.from - data.pad.bottom,
                     to = data.to - data.pad.top;
-              
+
                 if (from + $this.outerHeight() > data.end) {
                     $this.css('position', '');
                     continue;
                 }
-              
+
                 if (from < scrollY && to > scrollY) {
                     !($this.css("position") == "fixed") && $this.css({
                         left: $this.offset().left,
@@ -83,18 +88,18 @@
                     }).css("position", "absolute");
                     if (options.activeClass) { $this.addClass(options.activeClass); }
                 } else {
-                    $this.css({position: "", top: "", left: ""});
+                    $this.css({ position: "", top: "", left: "" });
                     if (options.activeClass) { $this.removeClass(options.activeClass); }
                 }
-          }
-          elements = elmts;
+            }
+            elements = elmts;
         };
 
         var update = function () { recalculateLimits(); onScroll(); };
 
         this.each(function () {
-            var $this = $(this), 
-                data  = $(this).data('pin') || {};
+            var $this = $(this),
+                data = $(this).data('pin') || {};
 
             if (data && data.update) { return; }
             elements.push($this);
@@ -110,5 +115,5 @@
         $window.load(update);
 
         return this;
-      };
+    };
 })(jQuery);
