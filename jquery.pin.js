@@ -33,6 +33,11 @@
                     bottom: 0
                 }, options.padding || {});
 
+                // If element was invisible, its outerWidth and outerHeight is 0, then it never get its width back; set width=auto first for that reason 
+                if ($this.outerWidth() == 0 || $this.outerHeight() == 0) {
+                    $this.css({ width: "auto", height: "auto" });
+                }
+
                 $this.data("pin", {
                     pad: pad,
                     from: (options.containerSelector ? containerOffset.top : offset.top) - pad.top,
@@ -41,9 +46,9 @@
                     parentTop: parentOffset.top
                 });
 
-                // If element was invisible, its outerWidth is 0, then it never get its width back; set width=auto first for that reason 
-                if (u.outerWidth() == 0) {
-                    u.css({ width: "auto" });
+                // Ignore invisible
+                if (!$this.is(":visible")) {
+                    continue;
                 }
 
                 $this.css({ width: $this.outerWidth() });
